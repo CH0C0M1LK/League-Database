@@ -18,3 +18,10 @@ from game_match
 join player on game_match.user_id = player.id
 where player.user_name='Faker'
 group by player.user_name
+
+select player.user_name as player_name, team.team_name as team_name, avg (kills) as average_kills
+from game_match 
+join player on game_match.user_id = player.id
+join team on game_match.team_id = team.id
+where team.team_name='T1'
+group by player.user_name, team.team_name
