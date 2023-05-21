@@ -12,3 +12,9 @@ join dragon_element on game_match.element_id = dragon_element.id
 select team.team_name, dragon_element.elemental || ' ' || dragon as dragons_killed from game_match
 join dragon_element on game_match.element_id = dragon_element.id
 join team on game_match.team_id = team.id
+
+select player.user_name as player_name, avg (kills) as average_kills
+from game_match 
+join player on game_match.user_id = player.id
+where player.user_name='Faker'
+group by player.user_name
