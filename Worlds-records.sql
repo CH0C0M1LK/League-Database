@@ -168,7 +168,6 @@ insert into game_match (dates, team1_id, team2_id, winning_team) values
    kills integer,
    deaths integer,
    assists integer,
-   baron integer,
    dragon integer,
    constraint fk_user_id foreign key(user_id) references player(id),
    constraint fk_role_id foreign key(role_id) references roles(id),
@@ -251,7 +250,7 @@ insert into game_score(user_id, role_id, team_id, date_id, category_id, champion
 (57, 2, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 (58, 3, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 (59, 4, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(20, 5, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(60, 5, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
 (21, 1, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 (22, 2, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
@@ -326,11 +325,11 @@ insert into game_score(user_id, role_id, team_id, date_id, category_id, champion
 (70, 5, 14, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #dk v jdg
-(56, 1, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(60, 5, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(51, 1, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(52, 2, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(53, 3, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(54, 4, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(55, 5, 11, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
 (26, 1, 7, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 (27, 2, 7, 2, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
@@ -445,11 +444,11 @@ insert into game_score(user_id, role_id, team_id, date_id, category_id, champion
 (65, 5, 13, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #dk v eg
-(56, 1, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(60, 5, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(51, 1, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(52, 2, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(53, 3, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(54, 4, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(55, 5, 11, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
 (31, 1, 6, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 (32, 2, 6, 4, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
@@ -603,11 +602,11 @@ insert into game_score(user_id, role_id, team_id, date_id, category_id, champion
 (30, 5, 7, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #dk v g2
-(56, 1, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(60, 5, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(51, 1, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(52, 2, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(53, 3, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(54, 4, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(55, 5, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
 (46, 1, 10, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 (47, 2, 10, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
@@ -635,11 +634,11 @@ insert into game_score(user_id, role_id, team_id, date_id, category_id, champion
 (34, 4, 6, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 (35, 5, 6, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(56, 1, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(60, 5, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(51, 1, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(52, 2, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(53, 3, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(54, 4, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(55, 5, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #jdg v dk
 (26, 1, 7, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
@@ -648,11 +647,11 @@ insert into game_score(user_id, role_id, team_id, date_id, category_id, champion
 (29, 4, 7, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 (30, 5, 7, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(56, 1, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(60, 5, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(51, 1, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(52, 2, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(53, 3, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(54, 4, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(55, 5, 11, 6, 1, random()*162+1, random()*5+1, floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #oct 15
 #tes v drx
