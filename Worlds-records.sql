@@ -41,18 +41,18 @@ create table team(
   
 insert into team (team_name) values
   ('GEN G'), ('RNG'), ('T1'), ('EDG'),
-  ('Fnatic'), ('EG'), ('JDG'), ('CFO'), 
+  ('FNC'), ('EG'), ('JDG'), ('CFO'), 
   ('100T'), ('G2'), ('DK'), ('C9'),
   ('TES'), ('GAM'), ('DRX'), ('RGE')
   ;
   
-create table matches(
+create table dates(
    id serial,
    date_name varchar,
    primary key(id)
    );
    
-insert into matches (date_name) values
+insert into dates (date_name) values
    ('Friday, October 7'), ('Saturday, October 8'), ('Sunday, October 9'),
    ('Monday, October 10'), ('Thursday, October 13'), ('Friday, October 14'),
    ('Saturday, October 15'), ('Sunday, October 16'), ('Thursday, October 20'),
@@ -124,13 +124,44 @@ insert into dragon_element (elemental) values
 ;
  
 # create relationship between players, team, and role
-   
+
+create table game_match(
+  id serial,
+  primary key(id),
+  dates integer,
+  team1_id integer,
+  team2_id integer,
+  winning_team integer,
+  constraint fk_dates foreign key(dates) references dates(id),
+  constraint fk_team1_id foreign key(team1_id) references team(id),
+  constraint fk_team2_id foreign key(team2_id) references team(id),
+  constraint fk_winning_team foreign key(winning_team) references team(id)
+  );
+  
+insert into game_match (dates, team1_id, team2_id, winning_team) values
+  (1, 1, 2, 2), (1, 3, 4, 3), (1, 7, 6, 7), (1, 8, 9, 8), (1, 10, 11, 11), (1, 12, 5, 5),
+  (2, 11, 7, 7), (2, 13, 14, 13), (2, 4, 12, 4), (2, 5, 3, 5), (2, 6, 10, 10), (2, 16, 15, 16),
+  (3,15,13,15), (3,2,8,2), (3,12,3,3), (3,4,5,4), (3,9,1,1), (3,14,16,16),
+  (4,14,15,15), (4,1,8,1), (4,9,2,2), (4,11,6,11), (4,16,13,16), (4,7,10,7),
+  (5,4,3,3), (5,3,12,3), (5,5,4,4), (5,12,4,4), (5,3,5,3), (5,5,12,12),
+  (6,7,11,11), (6,6,11,11), (6,10,7,7), (6,11,10,11), (6,6,7,7), (6,10,6,6),
+  (7,13,15,13), (7,13,16,13), (7,15,14,15), (7,15,16,15), (7,14,13,14), (7,16,14,16),
+  (8,2,1,1), (8,8,2,2), (8,1,9,1), (8,2,9,2), (8,8,1,1), (8,9,8,9),
+  (9,7,16,7),
+  (10,3,2,3),
+  (11,1,11,1),
+  (12,15,4,15),
+  (13,3,7,3),
+  (14,1,15,15),
+  (15,3,15,15)
+ ; 
+
 # many-to-many relationship between players, team, role, matches, and score
- create table game_match(
+ create table game_score(
    user_id integer,
    role_id integer,
    team_id integer,
-   match_id integer,
+   date_id integer,
    category_id integer,
    champion_id integer,
    element_id integer,
@@ -142,91 +173,91 @@ insert into dragon_element (elemental) values
    constraint fk_user_id foreign key(user_id) references player(id),
    constraint fk_role_id foreign key(role_id) references roles(id),
    constraint fk_team_id foreign key(team_id) references team(id),
-   constraint fk_match_id foreign key(match_id) references matches(id),
+   constraint fk_date_id foreign key(date_id) references dates(id),
    constraint fk_category_id foreign key(category_id) references game_category(id),
    constraint fk_champion_id foreign key(champion_id) references champion(id),
    constraint fk_element_id foreign key(element_id) references dragon_element(id)
    );
    
-insert into game_match(user_id, role_id, team_id, match_id, category_id, champion_id, element_id, dragon, kills, deaths, assists) values
+insert into game_score(user_id, role_id, team_id, date_id, category_id, champion_id, element_id, dragon, kills, deaths, assists) values
 # oct 7 groups
 #Gen v rng
-(1, 1, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)), 
-(2, 2, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(3, 3, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(4, 4, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(5, 5, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(1, 1, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)), 
+(2, 2, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(3, 3, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(4, 4, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(5, 5, 1, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(6, 1, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(7, 2, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(8, 3, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(9, 4, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(10, 5, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(6, 1, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(7, 2, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(8, 3, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(9, 4, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(10, 5, 2, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #t1 v edg
-(11, 1, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(12, 2, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(13, 3, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(14, 4, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(15, 5, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(11, 1, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(12, 2, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(13, 3, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(14, 4, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(15, 5, 3, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(16, 1, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(17, 2, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(18, 3, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(19, 4, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(20, 5, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(16, 1, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(17, 2, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(18, 3, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(19, 4, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(20, 5, 4, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #jdg v eg
-(26, 1, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(27, 2, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(28, 3, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(29, 4, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(30, 5, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(26, 1, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(27, 2, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(28, 3, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(29, 4, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(30, 5, 7, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(31, 1, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(32, 2, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(33, 3, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(34, 4, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(35, 5, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(31, 1, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(32, 2, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(33, 3, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(34, 4, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(35, 5, 6, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #cfo v 100t
-(36, 1, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(37, 2, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(38, 3, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(39, 4, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(40, 5, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(36, 1, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(37, 2, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(38, 3, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(39, 4, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(40, 5, 8, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(41, 1, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(42, 2, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(43, 3, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(44, 4, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(45, 5, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(41, 1, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(42, 2, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(43, 3, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(44, 4, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(45, 5, 9, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #g2 v dk
-(46, 1, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(47, 2, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(48, 3, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(49, 4, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(50, 5, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(46, 1, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(47, 2, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(48, 3, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(49, 4, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(50, 5, 10, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(51, 1, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(52, 2, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(53, 3, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(54, 4, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(55, 5, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(51, 1, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(52, 2, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(53, 3, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(54, 4, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(55, 5, 11, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #c9 v fnc
-(56, 1, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(20, 5, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(56, 1, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(57, 2, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(58, 3, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(59, 4, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(20, 5, 12, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(21, 1, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(22, 2, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(23, 3, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(24, 4, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(25, 5, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(21, 1, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(22, 2, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(23, 3, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(24, 4, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(25, 5, 5, 1, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #GROUPS SAT OCT 8
 #rge v drx
@@ -309,82 +340,82 @@ insert into game_match(user_id, role_id, team_id, match_id, category_id, champio
 
 # oct9
 #drx v tes
-(71, 1, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(72, 2, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(73, 3, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(74, 4, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(75, 5, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(71, 1, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(72, 2, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(73, 3, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(74, 4, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(75, 5, 15, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(61, 1, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(62, 2, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(63, 3, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(64, 4, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(65, 5, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(61, 1, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(62, 2, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(63, 3, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(64, 4, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(65, 5, 13, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #rng v cfo
-(6, 1, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(7, 2, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(8, 3, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(9, 4, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(10, 5, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(6, 1, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(7, 2, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(8, 3, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(9, 4, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(10, 5, 2, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(36, 1, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(37, 2, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(38, 3, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(39, 4, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(40, 5, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(36, 1, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(37, 2, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(38, 3, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(39, 4, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(40, 5, 8, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #c9 v t1
-(56, 1, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(60, 5, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(56, 1, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(57, 2, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(58, 3, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(59, 4, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(60, 5, 12, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(11, 1, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(12, 2, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(13, 3, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(14, 4, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(15, 5, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(11, 1, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(12, 2, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(13, 3, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(14, 4, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(15, 5, 3, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #edg v fnc
-(16, 1, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(17, 2, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(18, 3, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(19, 4, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(20, 5, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(16, 1, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(17, 2, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(18, 3, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(19, 4, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(20, 5, 4, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(21, 1, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(22, 2, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(23, 3, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(24, 4, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(25, 5, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(21, 1, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(22, 2, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(23, 3, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(24, 4, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(25, 5, 5, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #100t v gen
-(41, 1, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(42, 2, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(43, 3, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(44, 4, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(45, 5, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(41, 1, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(42, 2, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(43, 3, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(44, 4, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(45, 5, 9, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(1, 1, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(2, 2, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(3, 3, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(4, 4, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(5, 5, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(1, 1, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(2, 2, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(3, 3, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(4, 4, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(5, 5, 1, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #gam v rge
-(66, 1, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(67, 2, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(68, 3, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(69, 4, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(70, 5, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(66, 1, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(67, 2, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(68, 3, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(69, 4, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(70, 5, 14, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(76, 1, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(77, 2, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(78, 3, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(79, 4, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(80, 5, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(76, 1, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(77, 2, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(78, 3, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(79, 4, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(80, 5, 16, 3, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #GROUPS MON OCT 10
 #jdg v g2
@@ -467,82 +498,82 @@ insert into game_match(user_id, role_id, team_id, match_id, category_id, champio
 
 #oct 13
 #edg v t1
-(16, 1, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(17, 2, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(18, 3, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(19, 4, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(20, 5, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(16, 1, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(17, 2, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(18, 3, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(19, 4, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(20, 5, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(11, 1, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(12, 2, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(13, 3, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(14, 4, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(15, 5, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(11, 1, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(12, 2, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(13, 3, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(14, 4, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(15, 5, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #t1 v c9
-(11, 1, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(12, 2, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(13, 3, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(14, 4, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(15, 5, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(11, 1, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(12, 2, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(13, 3, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(14, 4, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(15, 5, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(56, 1, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(60, 5, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(56, 1, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(57, 2, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(58, 3, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(59, 4, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(60, 5, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #fnc v edg
-(21, 1, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(22, 2, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(23, 3, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(24, 4, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(25, 5, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(21, 1, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(22, 2, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(23, 3, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(24, 4, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(25, 5, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(16, 1, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(17, 2, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(18, 3, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(19, 4, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(20, 5, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(16, 1, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(17, 2, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(18, 3, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(19, 4, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(20, 5, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #c9 v edg
-(56, 1, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(60, 5, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(56, 1, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(57, 2, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(58, 3, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(59, 4, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(60, 5, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(16, 1, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(17, 2, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(18, 3, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(19, 4, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(20, 5, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(16, 1, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(17, 2, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(18, 3, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(19, 4, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(20, 5, 4, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #t1 v fnc
-(11, 1, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(12, 2, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(13, 3, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(14, 4, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(15, 5, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(11, 1, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(12, 2, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(13, 3, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(14, 4, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(15, 5, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(21, 1, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(22, 2, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(23, 3, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(24, 4, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(25, 5, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(21, 1, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(22, 2, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(23, 3, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(24, 4, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(25, 5, 5, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #fnc v c9
-(11, 1, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(12, 2, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(13, 3, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(14, 4, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(15, 5, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(11, 1, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(12, 2, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(13, 3, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(14, 4, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(15, 5, 3, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(56, 1, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(57, 2, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(58, 3, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(59, 4, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(60, 5, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(56, 1, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(57, 2, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(58, 3, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(59, 4, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(60, 5, 12, 5, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #GROUPS FRI OCT 14
 #g2 v eg
@@ -625,82 +656,82 @@ insert into game_match(user_id, role_id, team_id, match_id, category_id, champio
 
 #oct 15
 #tes v drx
-(61, 1, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(62, 2, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(63, 3, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(64, 4, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(65, 5, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(61, 1, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(62, 2, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(63, 3, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(64, 4, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(65, 5, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(71, 1, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(72, 2, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(73, 3, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(74, 4, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(75, 5, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(71, 1, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(72, 2, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(73, 3, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(74, 4, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(75, 5, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #tes v rge
-(61, 1, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(62, 2, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(63, 3, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(64, 4, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(65, 5, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(61, 1, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(62, 2, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(63, 3, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(64, 4, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(65, 5, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(76, 1, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(77, 2, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(78, 3, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(79, 4, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(80, 5, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(76, 1, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(77, 2, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(78, 3, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(79, 4, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(80, 5, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #drx v gam
-(71, 1, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(72, 2, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(73, 3, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(74, 4, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(75, 5, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(71, 1, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(72, 2, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(73, 3, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(74, 4, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(75, 5, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(66, 1, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(67, 2, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(68, 3, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(69, 4, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(70, 5, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(66, 1, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(67, 2, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(68, 3, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(69, 4, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(70, 5, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #drx v rge
-(71, 1, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(72, 2, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(73, 3, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(74, 4, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(75, 5, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(71, 1, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(72, 2, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(73, 3, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(74, 4, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(75, 5, 15, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(76, 1, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(77, 2, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(78, 3, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(79, 4, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(80, 5, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(76, 1, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(77, 2, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(78, 3, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(79, 4, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(80, 5, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #gam v tes
-(66, 1, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(67, 2, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(68, 3, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(69, 4, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(70, 5, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(66, 1, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(67, 2, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(68, 3, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(69, 4, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(70, 5, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(61, 1, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(62, 2, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(63, 3, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(64, 4, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(65, 5, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(61, 1, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(62, 2, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(63, 3, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(64, 4, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(65, 5, 13, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #rge v gam
-(76, 1, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(77, 2, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(78, 3, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(79, 4, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(80, 5, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(76, 1, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(77, 2, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(78, 3, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(79, 4, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(80, 5, 16, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(66, 1, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(67, 2, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(68, 3, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(69, 4, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(70, 5, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(66, 1, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(67, 2, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(68, 3, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(69, 4, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(70, 5, 14, 7, 1, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #GROUPS SUN OCT 16
 #100t v cfo
@@ -783,17 +814,17 @@ insert into game_match(user_id, role_id, team_id, match_id, category_id, champio
 
 #oct 20 quarter finals
 #jdg v rge
-(26, 1, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(27, 2, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(28, 3, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(29, 4, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(30, 5, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(26, 1, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(27, 2, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(28, 3, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(29, 4, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(30, 5, 7, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(76, 1, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(77, 2, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(78, 3, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(79, 4, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(80, 5, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(76, 1, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(77, 2, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(78, 3, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(79, 4, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(80, 5, 16, 9, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #QUARTER FINALS FRI OCT 21
 #t1 v rng
@@ -811,17 +842,17 @@ insert into game_match(user_id, role_id, team_id, match_id, category_id, champio
 
 #oct 22
 #gen v dk
-(1, 1, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(2, 2, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(3, 3, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(4, 4, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(5, 5, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(1, 1, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(2, 2, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(3, 3, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(4, 4, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(5, 5, 1, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(51, 1, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(52, 2, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(53, 3, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(54, 4, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(55, 5, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(51, 1, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(52, 2, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(53, 3, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(54, 4, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(55, 5, 11, 11, 2, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #QUARTER FINALS SUN OCT 23
 #drx v edg
@@ -839,17 +870,17 @@ insert into game_match(user_id, role_id, team_id, match_id, category_id, champio
 
 #oct 29 semifinals
 #t1 v jdg
-(11, 1, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(12, 2, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(13, 3, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(14, 4, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(15, 5, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(11, 1, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(12, 2, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(13, 3, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(14, 4, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(15, 5, 3, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(26, 1, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(27, 2, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(28, 3, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(29, 4, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(20, 5, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(26, 1, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(27, 2, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(28, 3, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(29, 4, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(20, 5, 7, 13, 3, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 
 #SEMI FINALS SUN OCT 30
 #gen v drx
@@ -867,15 +898,15 @@ insert into game_match(user_id, role_id, team_id, match_id, category_id, champio
 
 #nov 5 finals
 #t1 v drx
-(11, 1, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(12, 2, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(13, 3, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(14, 4, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(15, 5, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(11, 1, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(12, 2, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(13, 3, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(14, 4, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(15, 5, 3, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
 #vs
-(71, 1, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(72, 2, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(73, 3, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(74, 4, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
-(75, 5, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 10), floor(random() * 10), floor(random() * 20))
+(71, 1, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(72, 2, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(73, 3, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(74, 4, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20)),
+(75, 5, 15, 15, 4, floor(random() * 162 + 1), floor(random() * 5 + 1), floor(random() * 8), floor(random() * 10), floor(random() * 10), floor(random() * 20))
 ;
